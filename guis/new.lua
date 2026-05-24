@@ -22,7 +22,8 @@ local mainapi = {
 	ThreadFix = nil,
 	ToggleNotifications = {},
 	Version = '7.01',
-	Windows = {}
+	Windows = {},
+	ConfigChangeDepth = 0
 }
 
 local cloneref = cloneref or function(obj)
@@ -327,6 +328,7 @@ local function createMobileButton(buttonapi, position)
 		if heldbutton then
 			buttonapi.Bind = {}
 			button:Destroy()
+			mainapi:Save()
 		end
 	end)
 	button.MouseButton1Up:Connect(function()
@@ -338,6 +340,7 @@ local function createMobileButton(buttonapi, position)
 	end)
 
 	buttonapi.Bind = {Button = button}
+	mainapi:Save()
 end
 
 local function downloadFile(path, func)
@@ -417,6 +420,7 @@ local function makeDraggable(gui, window)
 					if ended then
 						ended:Disconnect()
 					end
+					mainapi:Save()
 				end
 			end)
 		end
@@ -522,6 +526,32 @@ mainapi.Libraries = {
 	tween = tween,
 	uipallet = uipallet
 }
+
+function mainapi:IsGUILoaded()
+	return self.Loaded == true and self.gui ~= nil and self.gui.Parent ~= nil
+end
+
+function mainapi:WatchConfigChanges(api, methods)
+	api.ConfigSaveWrapped = api.ConfigSaveWrapped or {}
+	for _, v in methods do
+		local callback = api[v]
+		if type(callback) == 'function' and not api.ConfigSaveWrapped[v] then
+			api.ConfigSaveWrapped[v] = true
+			api[v] = function(self, ...)
+				local depth = mainapi.ConfigChangeDepth or 0
+				mainapi.ConfigChangeDepth = depth + 1
+				local suc, res = pcall(callback, self, ...)
+				mainapi.ConfigChangeDepth = depth
+				if not suc then error(res) end
+				if depth == 0 then
+					mainapi:Save()
+				end
+				return res
+			end
+		end
+	end
+	return api
+end
 
 local components
 components = {
@@ -978,6 +1008,7 @@ components = {
 		end)
 
 		optionapi.Object = slider
+		mainapi:WatchConfigChanges(optionapi, {'SetValue', 'Toggle'})
 		api.Options[optionsettings.Name] = optionapi
 
 		return optionapi
@@ -1125,6 +1156,7 @@ components = {
 		end)
 
 		optionapi.Object = dropdown
+		mainapi:WatchConfigChanges(optionapi, {'SetValue', 'Change'})
 		api.Options[optionsettings.Name] = optionapi
 
 		return optionapi
@@ -1361,6 +1393,7 @@ components = {
 		end)
 
 		optionapi.Object = slider
+		mainapi:WatchConfigChanges(optionapi, {'SetValue'})
 		api.Options[optionsettings.Name] = optionapi
 
 		return optionapi
@@ -1686,6 +1719,7 @@ components = {
 		end)
 
 		optionapi.Object = targetbutton
+		mainapi:WatchConfigChanges(optionapi, {'Toggle'})
 
 		return optionapi
 	end,
@@ -1765,6 +1799,7 @@ components = {
 		end)
 
 		optionapi.Object = textbox
+		mainapi:WatchConfigChanges(optionapi, {'SetValue'})
 		api.Options[optionsettings.Name] = optionapi
 
 		return optionapi
@@ -2050,6 +2085,7 @@ components = {
 
 					items.Text = enabledtext
 					safecall(optionsettings.Function)
+					mainapi:Save()
 				end)
 
 				table.insert(self.Objects, object)
@@ -2118,6 +2154,7 @@ components = {
 			optionapi:ChangeValue()
 		end
 		optionapi.Object = textlist
+		mainapi:WatchConfigChanges(optionapi, {'ChangeValue'})
 		api.Options[optionsettings.Name] = optionapi
 
 		return optionapi
@@ -2212,6 +2249,7 @@ components = {
 			optionapi:Toggle()
 		end
 		optionapi.Object = toggle
+		mainapi:WatchConfigChanges(optionapi, {'Toggle'})
 		api.Options[optionsettings.Name] = optionapi
 
 		return optionapi
@@ -2436,6 +2474,7 @@ components = {
 		end)
 
 		optionapi.Object = slider
+		mainapi:WatchConfigChanges(optionapi, {'SetValue'})
 		api.Options[optionsettings.Name] = optionapi
 
 		return optionapi
@@ -2487,12 +2526,19 @@ mainapi.Components = setmetatable(components, {
 task.spawn(function()
 	repeat
 		local hue = tick() * (0.2 * mainapi.RainbowSpeed.Value) % 1
-		for _, v in mainapi.RainbowTable do
-			if v.Type == 'GUISlider' then
-				v:SetValue(mainapi:Color(hue))
-			else
-				v:SetValue(hue)
+		mainapi.ConfigSavePaused = true
+		local suc, err = pcall(function()
+			for _, v in mainapi.RainbowTable do
+				if v.Type == 'GUISlider' then
+					v:SetValue(mainapi:Color(hue))
+				else
+					v:SetValue(hue)
+				end
 			end
+		end)
+		mainapi.ConfigSavePaused = false
+		if not suc then
+			error(err)
 		end
 		task.wait(1 / mainapi.RainbowUpdateSpeed.Value)
 	until mainapi.Loaded == nil
@@ -2702,6 +2748,7 @@ function mainapi:CreateGUI()
 			mainapi.Binding = optionapi
 		end)
 
+		mainapi:WatchConfigChanges(optionapi, {'SetBind'})
 		categoryapi.Options.Bind = optionapi
 
 		return optionapi
@@ -2801,6 +2848,7 @@ function mainapi:CreateGUI()
 		end)
 
 		categoryapi.Buttons[categorysettings.Name] = optionapi
+		mainapi:WatchConfigChanges(optionapi, {'Toggle'})
 
 		return optionapi
 	end
@@ -2960,6 +3008,7 @@ function mainapi:CreateGUI()
 				toggleapi:Toggle()
 			end)
 
+			mainapi:WatchConfigChanges(toggleapi, {'Toggle'})
 			table.insert(optionapi.Toggles, toggleapi)
 
 			return toggleapi
@@ -3594,6 +3643,7 @@ function mainapi:CreateGUI()
 		end)
 
 		optionapi.Object = slider
+		mainapi:WatchConfigChanges(optionapi, {'SetValue', 'Toggle'})
 		categoryapi.Options[optionsettings.Name] = optionapi
 
 		return optionapi
@@ -4125,6 +4175,7 @@ function mainapi:CreateCategory(categorysettings)
 		end)
 
 		moduleapi.Object = modulebutton
+		mainapi:WatchConfigChanges(moduleapi, {'SetBind', 'Toggle'})
 		mainapi.Modules[modulesettings.Name] = moduleapi
 
 		local caller = function(f) return f() end
@@ -4199,6 +4250,7 @@ function mainapi:CreateCategory(categorysettings)
 		Function = categorysettings.Function
 	})
 
+	mainapi:WatchConfigChanges(categoryapi, {'Expand'})
 	categoryapi.Object = window
 	self.Categories[categorysettings.Name] = categoryapi
 
@@ -4395,6 +4447,7 @@ function mainapi:CreateOverlay(categorysettings)
 	end))
 
 	categoryapi:Update()
+	mainapi:WatchConfigChanges(categoryapi, {'Expand', 'Pin'})
 	categoryapi.Object = window
 	categoryapi.Children = customchildren
 	self.Categories[categorysettings.Name] = categoryapi
@@ -4740,6 +4793,9 @@ function mainapi:CreateCategoryList(categorysettings)
 						bindtext.Text = table.concat(tab, ' + '):upper()
 						bind.Size = UDim2.fromOffset(math.max(getfontsize(bindtext.Text, bindtext.TextSize, bindtext.Font).X + 10, 20), 21)
 					end
+					if mouse then
+						mainapi:Save()
+					end
 				end
 
 				bindFunction({}, v.Bind)
@@ -4842,6 +4898,7 @@ function mainapi:CreateCategoryList(categorysettings)
 						objectdotin.BackgroundColor3 = categorysettings.Color
 					end
 					categorysettings.Function()
+					mainapi:Save()
 				end)
 				table.insert(self.Objects, object)
 			end
@@ -4956,6 +5013,7 @@ function mainapi:CreateCategoryList(categorysettings)
 		Window = window
 	})
 
+	mainapi:WatchConfigChanges(categoryapi, {'ChangeValue', 'Expand'})
 	categoryapi.Object = window
 	self.Categories[categorysettings.Name] = categoryapi
 
@@ -5507,6 +5565,7 @@ function mainapi:CreateLegit()
 		end
 
 		moduleapi.Object = module
+		mainapi:WatchConfigChanges(moduleapi, {'Toggle'})
 		legitapi.Modules[modulesettings.Name] = moduleapi
 
 		local sorting = {}
@@ -6545,6 +6604,8 @@ end
 
 local guipane
 function mainapi:Load(skipgui, profile, profiledata)
+	local oldloading = self.ConfigLoading
+	self.ConfigLoading = true
 	if not skipgui then
 		self.GUIColor:SetValue(nil, nil, nil, 4)
 	end
@@ -6733,6 +6794,10 @@ function mainapi:Load(skipgui, profile, profiledata)
 			})
 		end
 	end
+	self.ConfigLoading = oldloading
+	if savecheck then
+		self:Save()
+	end
 end
 
 function mainapi:LoadOptions(object, savedoptions)
@@ -6766,6 +6831,7 @@ end
 
 function mainapi:Save(newprofile)
 	if not self.Loaded then return end
+	print("saved")
 	local guidata = {
 		Categories = {},
 		Profile = newprofile or self.Profile,

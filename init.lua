@@ -1,6 +1,5 @@
 --!nocheck
-shared.catdata = ... or {}
-shared.catdata.Key = script_key
+script_key = script_key
 local isfile = isfile or function(file)
 	local suc, res = pcall(function()
 		return readfile(file)
@@ -80,4 +79,4 @@ if not shared.VapeDeveloper then
 end
 
 downloader.Text = ''
-return loadstring(downloadFile('catrewrite/main.lua'), 'main')()
+return loadstring(downloadFile('catrewrite/main.lua'), 'main')(...)

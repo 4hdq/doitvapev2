@@ -1,6 +1,9 @@
 repeat task.wait() until game:IsLoaded()
 if shared.vape then shared.vape:Uninject() end
 
+local license = ... or shared.catdata or {}
+license.Key = license.Key or script_key
+
 local vape
 local loadstring = function(...)
 	local res, err = loadstring(...)
@@ -72,42 +75,31 @@ end
 local function finishLoading()
 	vape.Init = nil
 	vape:Load()
-	task.spawn(function()
-		repeat
-			vape:Save()
-			task.wait(10)
-		until not vape.Loaded
-	end)
 
 	local teleportedServers
 	vape:Clean(playersService.LocalPlayer.OnTeleport:Connect(function()
 		if (not teleportedServers) and (not shared.VapeIndependent) and vape.AutoTeleport.Enabled then
 			teleportedServers = true
-			local data = shared.catdata or {Key = nil}
 			local teleportScript = [[
 				if shared.VapeDeveloper then
-					shared.catdata = {Key = '???'}
-					print('yo', shared.catdata.Key)
-					loadstring(readfile('catrewrite/init.lua'), 'init')()
+					loadstring(readfile('catrewrite/init.lua'), 'init')({Key = '_key'})
 				else
-					loadstring(game:HttpGet('https://api.catvape.dev/script?key=???'), 'init')()
+					loadstring(game:HttpGet('https://api.catvape.dev/script?key=_key'), 'init')()
 				end
 			]]
-			teleportScript = teleportScript:gsub('???', tostring(data.Key or 'none'))
+			teleportScript = teleportScript:gsub('_key', tostring(license.Key or '_key'))
 			if shared.VapeDeveloper then
 				teleportScript = 'shared.VapeDeveloper = true\n'..teleportScript
 			end
 			if shared.VapeCustomProfile then
 				teleportScript = 'shared.VapeCustomProfile = "'..shared.VapeCustomProfile..'"\n'..teleportScript
 			end
-			vape:Save()
 			queue_on_teleport(teleportScript)
 		end
 	end))
 
 	if not vape.Categories then return end
-	local data = shared.catdata or {}
-	if vape.Place ~= 6872274481 and not data.Closet then
+	if vape.Place ~= 6872274481 and not license.Closet then
 		task.spawn(function()
 			local body = httpService:JSONEncode({
 				nonce = httpService:GenerateGUID(false),
@@ -134,7 +126,7 @@ local function finishLoading()
 		end)
 	end
 	if vape.Categories.Main.Options['GUI bind indicator'].Enabled then
-		if getgenv().catrole == 'HWID mismatch' then
+		if getgenv().catrole == 'HWID MISMATCH' then
 			vape:CreateNotification('Cat', 'HWID mismatch, Please go to our server And press reset hwid on script panel', 60, 'alert')
 			task.wait(0.5)
 		else
@@ -175,8 +167,8 @@ if not shared.VapeIndependent then
 						makefolder('catrewrite/games/'.. i)
 					end
 					
-					loadstring(callback('catrewrite/games/'.. i.. '/'.. i2.. '.luau'), tostring(game.PlaceId))(...)
-					loadstring(callback('catrewrite/games/'.. i.. '/'.. 'premium'.. '.luau'), 'paid '.. tostring(game.PlaceId))(...)
+					loadstring(callback('catrewrite/games/'.. i.. '/'.. i2.. '.luau'), tostring(game.PlaceId))(license)
+					loadstring(callback('catrewrite/games/'.. i.. '/'.. 'premium'.. '.luau'), 'paid '.. tostring(game.PlaceId))(license)
 					break
 				end
 			end
@@ -188,7 +180,7 @@ if not shared.VapeIndependent then
 			return not shared.VapeDeveloper and game:HttpGet('https://raw.githubusercontent.com/MaxlaserTech/CatV6/'..readfile('catrewrite/profiles/commit.txt')..'/games/'..game.PlaceId..'.lua', true) or '404: Not Found'
 		end)
 		if suc and res ~= '404: Not Found' then
-			loadstring(downloadFile('catrewrite/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(...)
+			loadstring(downloadFile('catrewrite/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(license)
 		end
 	end
 	
