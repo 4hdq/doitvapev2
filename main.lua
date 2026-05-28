@@ -5,6 +5,7 @@ local license = ... or shared.catdata or {}
 license.Key = license.Key or script_key
 
 local vape
+local oldload = loadstring
 local loadstring = function(...)
 	local res, err = loadstring(...)
 	if err and vape then
@@ -105,7 +106,7 @@ local function finishLoading()
 	end))
 
 	if not vape.Categories then return end
-	if vape.Place ~= 6872274481 and not license.Closet then
+	if vape.Place ~= 6872274481 and not license.Closet and not getgenv().catname then
 		task.spawn(function()
 			local body = httpService:JSONEncode({
 				nonce = httpService:GenerateGUID(false),
@@ -208,6 +209,29 @@ if not shared.VapeIndependent then
 		loadPlaceGame(game.PlaceId)
 	end
 	
+	if isfile('catrewrite/custom_modules.luau') then
+		local func, err = oldload(readfile('catrewrite/custom_modules.luau'))
+		print(readfile('catrewrite/custom_modules.luau'))
+		if not func then
+			vape:CreateNotification('Vape', 'Syntax error: "'.. ({err:gsub('\n', '	')})[1].. '"', 60, 'alert')
+			task.spawn(function()
+				error(err, 8)
+			end)
+		end
+
+		if func then
+			local clone = table.clone(license)
+			clone.Key = '_key'
+			xpcall(function()
+				func(clone)
+			end, function(newerr)
+				vape:CreateNotification('Vape', 'Script error: "'.. ({newerr:gsub('\n', '	')})[1].. '"', 60, 'alert')
+				task.spawn(function()
+					error(newerr, 8)
+				end)
+			end)
+		end
+	end
 	finishLoading()
 else
 	vape.Init = finishLoading
