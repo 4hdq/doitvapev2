@@ -272,7 +272,9 @@ local function createDownloader(text)
 			downloader.Parent = mainapi.gui
 			mainapi.Downloader = downloader
 		end
-		downloader.Text = 'Downloading '..text
+		pcall(function()
+			downloader.Text = 'Downloading '..text
+		end)
 	end
 end
 
