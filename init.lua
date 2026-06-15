@@ -29,7 +29,7 @@ local function downloadFile(path, func)
 			downloader.Text = 'Downloading '.. path
 		end
 		local suc, res = pcall(function()
-			return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('catrewrite/profiles/commit.txt')..'/'..select(1, path:gsub('catrewrite/', '')), true)
+			return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('doitvapev2/profiles/commit.txt')..'/'..select(1, path:gsub('doitvapev2/', '')), true)
 		end)
 		if not suc or res == '404: Not Found' then
 			error(res)
@@ -57,7 +57,7 @@ local function wipeFolder(path)
 end
 
 
-for _, folder in {'catrewrite', 'catrewrite/games', 'catrewrite/profiles', 'catrewrite/assets', 'catrewrite/libraries', 'catrewrite/guis'} do
+for _, folder in {'doitvapev2', 'doitvapev2/games', 'doitvapev2/profiles', 'doitvapev2/assets', 'doitvapev2/libraries', 'doitvapev2/guis'} do
 	if not isfolder(folder) then
 		downloader.Text = 'Downloading '.. folder
 		makefolder(folder)
@@ -74,17 +74,17 @@ if not shared.VapeDeveloper then
 		commit = commit and subbed:sub(commit + 13, commit + 52) or nil
 		commit = commit and #commit == 40 and commit or 'main'
 	end
-	if commit == 'main' or (isfile('catrewrite/profiles/commit.txt') and readfile('catrewrite/profiles/commit.txt') or '') ~= commit then
-		if commit ~= 'main' and isfile('catrewrite/profiles/commit.txt') then
-			shared.updated = readfile('catrewrite/profiles/commit.txt')
+	if commit == 'main' or (isfile('doitvapev2/profiles/commit.txt') and readfile('doitvapev2/profiles/commit.txt') or '') ~= commit then
+		if commit ~= 'main' and isfile('doitvapev2/profiles/commit.txt') then
+			shared.updated = readfile('doitvapev2/profiles/commit.txt')
 		end
-		wipeFolder('catrewrite')
-		wipeFolder('catrewrite/games')
-		wipeFolder('catrewrite/guis')
-		wipeFolder('catrewrite/libraries')
+		wipeFolder('doitvapev2')
+		wipeFolder('doitvapev2/games')
+		wipeFolder('doitvapev2/guis')
+		wipeFolder('doitvapev2/libraries')
 	end
-	writefile('catrewrite/profiles/commit.txt', commit)
+	writefile('doitvapev2/profiles/commit.txt', commit)
 end
 
 downloader.Text = ''
-return loadstring(downloadFile('catrewrite/main.lua'), 'main')(license)
+return loadstring(downloadFile('doitvapev2/main.lua'), 'main')(license)

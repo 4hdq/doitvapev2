@@ -221,7 +221,7 @@ local function downloadFile(path, func)
 	if not isfile(path) then
 		createDownloader(path)
 		local suc, res = pcall(function()
-			return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('catrewrite/profiles/commit.txt')..'/'..select(1, path:gsub('catrewrite/', '')), true)
+			return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('doitvapev2/profiles/commit.txt')..'/'..select(1, path:gsub('doitvapev2/', '')), true)
 		end)
 		if not suc or res == '404: Not Found' then
 			error(res)
@@ -3724,12 +3724,12 @@ topbar:CreateDropdown({
 	List = inputService.TouchEnabled and {'new', 'old'} or {'new', 'old', 'rise'},
 	Function = function(val, mouse)
 		if mouse then
-			writefile('catrewrite/profiles/gui.txt', val)
+			writefile('doitvapev2/profiles/gui.txt', val)
 			shared.vapereload = true
 			if shared.VapeDeveloper then
-				loadstring(readfile('catrewrite/loader.lua'), 'loader')()
+				loadstring(readfile('doitvapev2/loader.lua'), 'loader')()
 			else
-				loadstring(game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('catrewrite/profiles/commit.txt')..'/loader.lua', true))()
+				loadstring(game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('doitvapev2/profiles/commit.txt')..'/loader.lua', true))()
 			end
 		end
 	end,
@@ -3760,14 +3760,14 @@ topbar:CreateButton({
 	Name = 'Reset current profile',
 	Function = function()
 	mainapi.Save = function() end
-		if isfile('catrewrite/profiles/'..mainapi.Profile..mainapi.Place..'.txt') and delfile then
-			delfile('catrewrite/profiles/'..mainapi.Profile..mainapi.Place..'.txt')
+		if isfile('doitvapev2/profiles/'..mainapi.Profile..mainapi.Place..'.txt') and delfile then
+			delfile('doitvapev2/profiles/'..mainapi.Profile..mainapi.Place..'.txt')
 		end
 		shared.vapereload = true
 		if shared.VapeDeveloper then
-			loadstring(readfile('catrewrite/loader.lua'), 'loader')()
+			loadstring(readfile('doitvapev2/loader.lua'), 'loader')()
 		else
-			loadstring(game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('catrewrite/profiles/commit.txt')..'/loader.lua', true))()
+			loadstring(game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('doitvapev2/profiles/commit.txt')..'/loader.lua', true))()
 		end
 	end,
 	Tooltip = 'This will set your profile to the default settings of Vape'
@@ -3829,9 +3829,9 @@ topbar:CreateButton({
 	Function = function()
 		shared.vapereload = true
 		if shared.VapeDeveloper then
-			loadstring(readfile('catrewrite/loader.lua'), 'loader')()
+			loadstring(readfile('doitvapev2/loader.lua'), 'loader')()
 		else
-			loadstring(game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('catrewrite/profiles/commit.txt')..'/loader.lua', true))()
+			loadstring(game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('doitvapev2/profiles/commit.txt')..'/loader.lua', true))()
 		end
 	end,
 	Tooltip = 'Reloads vape for debugging purposes'

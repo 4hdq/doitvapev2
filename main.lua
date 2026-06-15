@@ -10,7 +10,17 @@ local LocalPlayer = Players.LocalPlayer
 local function getRobloxHash(player)
 	-- Generate a hash based on Roblox username only for verification
 	local data = player.Name
-	return game:HttpGet("https://api.hashify.net/hash/sha256?text=" .. HttpService:UrlEncode(data)):match('"Digest":"([^"]+)"'):lower()
+	local success, response = pcall(function()
+		return game:HttpGet("https://api.hashify.net/hash/sha256?text=" .. HttpService:UrlEncode(data), true)
+	end)
+	if not success or not response then
+		return nil
+	end
+	local hash = response:match('"Digest":"([^"]+)"')
+	if not hash then
+		return nil
+	end
+	return hash:lower()
 end
 
 local function loadWhitelist()
@@ -118,7 +128,7 @@ local function downloadFile(path, func)
 	if not isfile(path) then
 		warn(path)
 		local suc, res = pcall(function()
-			return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('catrewrite/profiles/commit.txt')..'/'..select(1, path:gsub('catrewrite/', '')), true)
+			return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('doitvapev2/profiles/commit.txt')..'/'..select(1, path:gsub('doitvapev2/', '')), true)
 		end)
 		if not suc or res == '404: Not Found' then
 			task.spawn(error, res)
@@ -149,7 +159,7 @@ local function finishLoading()
 			teleportedServers = true
 			local teleportScript = [[
 				if shared.VapeDeveloper then
-					loadstring(readfile('catrewrite/main.lua'), 'main')(_scriptconfig)
+					loadstring(readfile('doitvapev2/main.lua'), 'main')(_scriptconfig)
 				else
 					loadstring(game:HttpGet('https://api.catvape.dev/script?key=_key'), 'init')(_scriptconfig)
 				end
@@ -184,27 +194,27 @@ local function finishLoading()
 			vape:CreateNotification('Finished Loading', (getgenv().catname and `Authenticated as {getgenv().catname} with {getgenv().catrole}, ` or '').. (vape.VapeButton and 'Press the button in the top right' or 'Press '..table.concat(vape.Keybind, ' + '):upper())..' to open GUI', 5)
 			task.delay(1, function()
 				if shared.updated then
-					vape:CreateNotification('Cat', `Script has updated from {shared.updated} to {readfile('catrewrite/profiles/commit.txt')}`, 10, 'info')
+					vape:CreateNotification('DoitVapeV2', `Script has updated from {shared.updated} to {readfile('doitvapev2/profiles/commit.txt')}`, 10, 'info')
 				end
 			end)
 		end
 	end
 end
 
-if not isfile('catrewrite/profiles/gui.txt') then
-	writefile('catrewrite/profiles/gui.txt', 'new')
+if not isfile('doitvapev2/profiles/gui.txt') then
+	writefile('doitvapev2/profiles/gui.txt', 'new')
 end
-local gui = 'new'--readfile('catrewrite/profiles/gui.txt')
+local gui = 'new'--readfile('doitvapev2/profiles/gui.txt')
 
-if not isfolder('catrewrite/assets/'..gui) then
-	makefolder('catrewrite/assets/'..gui)
+if not isfolder('doitvapev2/assets/'..gui) then
+	makefolder('doitvapev2/assets/'..gui)
 end
-if not isfile('catrewrite/profiles/commit.txt') then
-	writefile('catrewrite/profiles/commit.txt', 'main')
+if not isfile('doitvapev2/profiles/commit.txt') then
+	writefile('doitvapev2/profiles/commit.txt', 'main')
 end
 
 getgenv().used_init = true
-vape = loadstring(downloadFile('catrewrite/guis/'..gui..'.lua'), 'gui')(license)
+vape = loadstring(downloadFile('doitvapev2/guis/'..gui..'.lua'), 'gui')(license)
 _G.vape = vape
 shared.vape = vape
 
@@ -215,20 +225,20 @@ if shared.maincat then
 end
 
 if not shared.VapeIndependent then
-	loadstring(downloadFile('catrewrite/games/universal.lua'), 'universal')(license)
-	if isfile('catrewrite/games/'..game.PlaceId..'.lua') then
-		loadstring(readfile('catrewrite/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(license)
+	loadstring(downloadFile('doitvapev2/games/universal.lua'), 'universal')(license)
+	if isfile('doitvapev2/games/'..game.PlaceId..'.lua') then
+		loadstring(readfile('doitvapev2/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(license)
 	else
 		if not shared.VapeDeveloper then
 			local suc, res = pcall(function()
-				return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('catrewrite/profiles/commit.txt')..'/games/'..game.PlaceId..'.lua', true)
+				return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('doitvapev2/profiles/commit.txt')..'/games/'..game.PlaceId..'.lua', true)
 			end)
 			if suc and res ~= '404: Not Found' then
-				loadstring(downloadFile('catrewrite/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(license)
+				loadstring(downloadFile('doitvapev2/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(license)
 			end
 		end
 	end
-	loadstring(downloadFile('catrewrite/libraries/premium.lua'), 'premium')(license)
+	loadstring(downloadFile('doitvapev2/libraries/premium.lua'), 'premium')(license)
 	finishLoading()
 else
 	vape.Init = finishLoading
