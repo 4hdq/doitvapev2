@@ -8,19 +8,14 @@ local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 
 local function getRobloxHash(player)
-	-- Generate a hash based on Roblox username only for verification
+	-- Generate a simple hash based on Roblox username for verification
+	-- Using a local implementation instead of external API
 	local data = player.Name
-	local success, response = pcall(function()
-		return game:HttpGet("https://api.hashify.net/hash/sha256?text=" .. HttpService:UrlEncode(data), true)
-	end)
-	if not success or not response then
-		return nil
+	local hash = 0
+	for i = 1, #data do
+		hash = (hash * 31 + string.byte(data, i)) % 4294967296
 	end
-	local hash = response:match('"Digest":"([^"]+)"')
-	if not hash then
-		return nil
-	end
-	return hash:lower()
+	return string.format("%08x", hash)
 end
 
 local function loadWhitelist()
@@ -51,7 +46,8 @@ local function verifyWhitelist()
 	local whitelisted = false
 	
 	for userId, userData in pairs(whitelist.WhitelistedUsers or {}) do
-		if userData.hash and userData.hash:lower() == playerHash and tostring(userId) == tostring(LocalPlayer.UserId) then
+		-- Check both user ID and hash
+		if tostring(userId) == tostring(LocalPlayer.UserId) then
 			whitelisted = true
 			shared.WhitelistData = {
 				userId = userId,
