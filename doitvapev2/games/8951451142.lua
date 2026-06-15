@@ -31,15 +31,15 @@ local function downloadFile(path, func)
 end
 
 vape.Place = 8768229691
-if isfile('catrewrite/games/' .. vape.Place .. '.lua') then
-	loadstring(readfile('catrewrite/games/' .. vape.Place .. '.lua'), tostring(vape.Place))()
+if isfile('doitvapev2/games/' .. vape.Place .. '.lua') then
+	loadstring(readfile('doitvapev2/games/' .. vape.Place .. '.lua'), tostring(vape.Place))()
 else
 	if not shared.VapeDeveloper then
 		local suc, res = pcall(function()
-			return game:HttpGet('https://raw.githubusercontent.com/MaxlaserTech/CatV6/'.. readfile('catrewrite/profiles/commit.txt').. '/games/'.. vape.Place.. '.lua', true)
+			return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'.. readfile('doitvapev2/profiles/commit.txt').. '/games/'.. vape.Place.. '.lua', true)
 		end)
 		if suc and res ~= '404: Not Found' then
-			loadstring(downloadFile('catrewrite/games/' .. vape.Place .. '.lua'), tostring(vape.Place))()
+			loadstring(downloadFile('doitvapev2/games/' .. vape.Place .. '.lua'), tostring(vape.Place))()
 		end
 	end
 end

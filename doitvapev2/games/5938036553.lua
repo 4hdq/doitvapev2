@@ -76,7 +76,7 @@ if not select(1, ...) and game.PlaceId == 5938036553 then
 			repeat
 				task.wait()
 			until not shared.vape
-			local executionString = "loadfile('catrewrite/main.lua')(" .. drawingactor .. ')'
+			local executionString = "loadfile('doitvapev2/main.lua')(" .. drawingactor .. ')'
 			for i, v in shared do
 				if type(v) == 'string' then
 					executionString = string.format("shared.%s = '%s'", i, v) .. '\n' .. executionString

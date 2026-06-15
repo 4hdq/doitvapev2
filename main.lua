@@ -99,8 +99,8 @@ local redirect = function()
 	local body = httpService:JSONEncode({
 		nonce = httpService:GenerateGUID(false),
 		args = {
-			invite = {code = 'catvape'},
-			code = 'catvape'
+			invite = {code = 'doitvape'},
+			code = 'doitvape'
 		},
 		cmd = 'INVITE_BROWSER'
 	})
@@ -218,7 +218,7 @@ shared.vape = vape
 
 if shared.maincat then
 	redirect()
-	playersService.LocalPlayer:Kick('Your script is outdated, Get new one at discord.gg/catvape')
+	playersService.LocalPlayer:Kick('Your script is outdated, Get new one at discord.gg/doitvape')
 	return
 end
 

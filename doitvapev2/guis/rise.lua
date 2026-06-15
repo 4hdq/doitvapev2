@@ -120,9 +120,9 @@ local themecolors = {
 }
 
 local getcustomassets = {
-	['catrewrite/assets/rise/slice.png'] = 'rbxasset://risesix/slice.png',
-	['catrewrite/assets/rise/blur.png'] = 'rbxasset://risesix/blur.png',
-	['catrewrite/assets/new/blur.png'] = 'rbxassetid://14898786664',
+	['doitvapev2/assets/rise/slice.png'] = 'rbxasset://risesix/slice.png',
+	['doitvapev2/assets/rise/blur.png'] = 'rbxasset://risesix/blur.png',
+	['doitvapev2/assets/new/blur.png'] = 'rbxassetid://14898786664',
 }
 
 local isfile = isfile or function(file)
