@@ -191,7 +191,8 @@ local function finishLoading()
 			vape:CreateNotification('Finished Loading', (getgenv().catname and `Authenticated as {getgenv().catname} with {getgenv().catrole}, ` or '').. (vape.VapeButton and 'Press the button in the top right' or 'Press '..table.concat(vape.Keybind, ' + '):upper())..' to open GUI', 5)
 			task.delay(1, function()
 				if shared.updated then
-					vape:CreateNotification('DoitVapeV2', `Script has updated from {shared.updated} to {readfile('doitvapev2/profiles/commit.txt')}`, 10, 'info')
+					local commit = isfile('doitvapev2/profiles/commit.txt') and readfile('doitvapev2/profiles/commit.txt') or 'main'
+					vape:CreateNotification('DoitVapeV2', `Script has updated from {shared.updated} to {commit}`, 10, 'info')
 				end
 			end)
 		end
@@ -227,8 +228,9 @@ if not shared.VapeIndependent then
 		loadstring(readfile('doitvapev2/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(license)
 	else
 		if not shared.VapeDeveloper then
+			local commit = isfile('doitvapev2/profiles/commit.txt') and readfile('doitvapev2/profiles/commit.txt') or 'main'
 			local suc, res = pcall(function()
-				return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..readfile('doitvapev2/profiles/commit.txt')..'/games/'..game.PlaceId..'.lua', true)
+				return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/'..commit..'/games/'..game.PlaceId..'.lua', true)
 			end)
 			if suc and res ~= '404: Not Found' then
 				loadstring(downloadFile('doitvapev2/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(license)
