@@ -1,7 +1,8 @@
 {
-  "WhitelistedUsers": {
-    "798957568890241084": {
-      "hash": "0541a97b06eb45a535b4b267f661d9d9629605d2278e8d5ed605c0c4f7e3745b825e696833ae2e6b73fe0589308267d7dca1470fbe85e55d350bf58954089605",
+ "WhitelistedUsers": {
+    "445070253": {
+      "name": "0801Lucas",
+      "hash": "19db139cda2b6b88f1b9908bfda995068c4a241681a2781816418be0e0eac855",
       "attackable": false,
       "level": 3,
       "tags": [
