@@ -1,0 +1,19 @@
+{
+  "WhitelistedUsers": {
+    "798957568890241084": {
+      "hash": "0541a97b06eb45a535b4b267f661d9d9629605d2278e8d5ed605c0c4f7e3745b825e696833ae2e6b73fe0589308267d7dca1470fbe85e55d350bf58954089605",
+      "attackable": false,
+      "level": 3,
+      "tags": [
+        {
+          "text": "Owner",
+          "color": [
+            255,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  }
+}
