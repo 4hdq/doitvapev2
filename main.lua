@@ -158,7 +158,7 @@ local function finishLoading()
 				if shared.VapeDeveloper then
 					loadstring(readfile('doitvapev2/main.lua'), 'main')(_scriptconfig)
 				else
-					loadstring(game:HttpGet('https://api.catvape.dev/script?key=_key'), 'init')(_scriptconfig)
+					loadstring(game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/master/init.lua', true), 'init')(_scriptconfig)
 				end
 			]]
 			local teleportConfig = httpService:JSONEncode(license)
