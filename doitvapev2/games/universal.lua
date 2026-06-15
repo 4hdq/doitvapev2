@@ -15,8 +15,9 @@ local isfile = isfile
 	end
 local function downloadFile(path, func)
 	if not isfile(path) then
+		local commit = isfile('doitvapev2/profiles/commit.txt') and readfile('doitvapev2/profiles/commit.txt') or 'main'
 		local suc, res = pcall(function()
-			return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/' .. readfile('doitvapev2/profiles/commit.txt') .. '/' .. select(1, path:gsub('doitvapev2/', '')), true)
+			return game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/' .. commit .. '/' .. select(1, path:gsub('doitvapev2/', '')), true)
 		end)
 		if not suc or res == '404: Not Found' then
 			error(res)
