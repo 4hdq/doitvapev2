@@ -14,12 +14,13 @@ local isfile = isfile
 	end
 local function downloadFile(path, func)
 	if not isfile(path) then
+		local commit = isfile('doitvapev2/profiles/commit.txt') and readfile('doitvapev2/profiles/commit.txt') or 'main'
 		local suc, res = pcall(function()
 			return game:HttpGet(
-				'https://raw.githubusercontent.com/MaxlaserTech/CatV6/'
-					.. readfile('catrewrite/profiles/commit.txt')
+				'https://raw.githubusercontent.com/4hdq/doitvapev2/'
+					.. commit
 					.. '/'
-					.. select(1, path:gsub('catrewrite/', '')),
+					.. select(1, path:gsub('doitvapev2/', '')),
 				true
 			)
 		end)
@@ -57,7 +58,7 @@ local prediction = vape.Libraries.prediction
 local targetinfo = vape.Libraries.targetinfo
 local sessioninfo = vape.Libraries.sessioninfo
 local getcustomasset = vape.Libraries.getcustomasset
-local drawingactor = loadstring(downloadFile('catrewrite/libraries/drawing.lua'), 'drawing')(...)
+local drawingactor = loadstring(downloadFile('doitvapev2/libraries/drawing.lua'), 'drawing')(...)
 local function notif(...)
 	return vape:CreateNotification(...)
 end
@@ -112,7 +113,7 @@ local function addBlur(parent)
 	blur.Size = UDim2.new(1, 89, 1, 52)
 	blur.Position = UDim2.fromOffset(-48, -31)
 	blur.BackgroundTransparency = 1
-	blur.Image = getcustomasset('catrewrite/assets/new/blur.png')
+	blur.Image = getcustomasset('doitvapev2/assets/new/blur.png')
 	blur.ScaleType = Enum.ScaleType.Slice
 	blur.SliceCenter = Rect.new(52, 31, 261, 502)
 	blur.Parent = parent
