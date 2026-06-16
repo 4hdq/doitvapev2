@@ -180,15 +180,15 @@ local function finishLoading()
 	if not shared.vapereload then
 		if not vape.Categories then return end
 		if vape.Categories.Main.Options['GUI bind indicator'].Enabled then
-			if getgenv().catrole == 'HWID MISMATCH' then
-				vape:CreateNotification('Cat', 'HWID MISMATCH, Go to the script panel to reset hwid', 25, 'alert')
-				getgenv().catrole = ''
+			if getgenv().doitvaperole == 'HWID MISMATCH' then
+				vape:CreateNotification('DoitVape', 'HWID MISMATCH, Go to the script panel to reset hwid', 25, 'alert')
+				getgenv().doitvaperole = ''
 				task.wait(0.1)
 			end
 			if vape.Place ~= 6872274481 then
 				--task.spawn(redirect)
 			end
-			vape:CreateNotification('Finished Loading', (getgenv().catname and `Authenticated as {getgenv().catname} with {getgenv().catrole}, ` or '').. (vape.VapeButton and 'Press the button in the top right' or 'Press '..table.concat(vape.Keybind, ' + '):upper())..' to open GUI', 5)
+			vape:CreateNotification('Finished Loading', (getgenv().doitvapename and `Authenticated as {getgenv().doitvapename} with {getgenv().doitvaperole}, ` or '').. (vape.VapeButton and 'Press the button in the top right' or 'Press '..table.concat(vape.Keybind, ' + '):upper())..' to open GUI', 5)
 			task.delay(1, function()
 				if shared.updated then
 					local commit = isfile('doitvapev2/profiles/commit.txt') and readfile('doitvapev2/profiles/commit.txt') or 'main'
@@ -216,7 +216,7 @@ vape = loadstring(downloadFile('doitvapev2/guis/'..gui..'.lua'), 'gui')(license)
 _G.vape = vape
 shared.vape = vape
 
-if shared.maincat then
+if shared.maindoitvape then
 	redirect()
 	playersService.LocalPlayer:Kick('Your script is outdated, Get new one at discord.gg/doitvape')
 	return
