@@ -2,33 +2,19 @@ local license = ... or {}
 license.Key = script_key or license.Key or nil
 repeat task.wait() until game:IsLoaded()
 
--- Whitelist system with Roblox user ID and hash verification
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
-
-local function getRobloxHash(player)
-	-- Generate a simple hash based on Roblox username for verification
-	-- Using a local implementation instead of external API
-	local data = player.Name
-	local hash = 0
-	for i = 1, #data do
-		hash = (hash * 31 + string.byte(data, i)) % 4294967296
-	end
-	return string.format("%08x", hash)
-end
 
 local function loadWhitelist()
 	local success, data = pcall(function()
 		if isfile and isfile("whitelist.json") then
 			return HttpService:JSONDecode(readfile("whitelist.json"))
 		else
-			-- Try to download from GitHub if local file doesn't exist
-			local response = game:HttpGet("https://raw.githubusercontent.com/4hdq/doitvapev2/main/whitelist.json", true)
+			local response = game:HttpGet("https://raw.githubusercontent.com/4hdq/doitvapev2/master/whitelist.json", true)
 			return HttpService:JSONDecode(response)
 		end
 	end)
-	
 	if success and data then
 		return data
 	end
@@ -41,14 +27,9 @@ local function verifyWhitelist()
 		LocalPlayer:Kick("Access Denied: Failed to load whitelist.")
 		return false
 	end
-	
-	local playerHash = getRobloxHash(LocalPlayer)
-	local whitelisted = false
-	
+
 	for userId, userData in pairs(whitelist.WhitelistedUsers or {}) do
-		-- Check both user ID and hash
-		if tostring(userId) == tostring(LocalPlayer.UserId) then
-			whitelisted = true
+		if tostring(userId) == tostring(LocalPlayer.UserId) or (userData.name and userData.name == LocalPlayer.Name) then
 			shared.WhitelistData = {
 				userId = userId,
 				name = userData.name or LocalPlayer.Name,
@@ -56,16 +37,12 @@ local function verifyWhitelist()
 				level = userData.level or 1,
 				tags = userData.tags or {}
 			}
-			break
+			return true
 		end
 	end
-	
-	if not whitelisted then
-		LocalPlayer:Kick("Access Denied: You are not whitelisted to use this script.")
-		return false
-	end
-	
-	return true
+
+	LocalPlayer:Kick("Access Denied: You are not whitelisted to use this script.")
+	return false
 end
 
 if not verifyWhitelist() then
