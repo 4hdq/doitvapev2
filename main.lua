@@ -2,53 +2,6 @@ local license = ... or {}
 license.Key = script_key or license.Key or nil
 repeat task.wait() until game:IsLoaded()
 
-local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService")
-local LocalPlayer = Players.LocalPlayer
-
-local function loadWhitelist()
-	local success, data = pcall(function()
-		if isfile and isfile("whitelist.json") then
-			return HttpService:JSONDecode(readfile("whitelist.json"))
-		else
-			local response = game:HttpGet("https://raw.githubusercontent.com/4hdq/doitvapev2/master/whitelist.json", true)
-			return HttpService:JSONDecode(response)
-		end
-	end)
-	if success and data then
-		return data
-	end
-	return nil
-end
-
-local function verifyWhitelist()
-	local whitelist = loadWhitelist()
-	if not whitelist then
-		LocalPlayer:Kick("Access Denied: Failed to load whitelist.")
-		return false
-	end
-
-	for userId, userData in pairs(whitelist.WhitelistedUsers or {}) do
-		if tostring(userId) == tostring(LocalPlayer.UserId) or (userData.name and userData.name == LocalPlayer.Name) then
-			shared.WhitelistData = {
-				userId = userId,
-				name = userData.name or LocalPlayer.Name,
-				attackable = userData.attackable or false,
-				level = userData.level or 1,
-				tags = userData.tags or {}
-			}
-			return true
-		end
-	end
-
-	LocalPlayer:Kick("Access Denied: You are not whitelisted to use this script.")
-	return false
-end
-
-if not verifyWhitelist() then
-	return
-end
-
 if shared.vape then shared.vape:Uninject() end
 
 local vape
@@ -157,15 +110,7 @@ local function finishLoading()
 	if not shared.vapereload then
 		if not vape.Categories then return end
 		if vape.Categories.Main.Options['GUI bind indicator'].Enabled then
-			if getgenv().doitvaperole == 'HWID MISMATCH' then
-				vape:CreateNotification('DoitVape', 'HWID MISMATCH, Go to the script panel to reset hwid', 25, 'alert')
-				getgenv().doitvaperole = ''
-				task.wait(0.1)
-			end
-			if vape.Place ~= 6872274481 then
-				--task.spawn(redirect)
-			end
-			vape:CreateNotification('Finished Loading', (getgenv().doitvapename and `Authenticated as {getgenv().doitvapename} with {getgenv().doitvaperole}, ` or '').. (vape.VapeButton and 'Press the button in the top right' or 'Press '..table.concat(vape.Keybind, ' + '):upper())..' to open GUI', 5)
+			vape:CreateNotification('Finished Loading', (vape.VapeButton and 'Press the button in the top right' or 'Press '..table.concat(vape.Keybind, ' + '):upper())..' to open GUI', 5)
 			task.delay(1, function()
 				if shared.updated then
 					local commit = isfile('doitvapev2/profiles/commit.txt') and readfile('doitvapev2/profiles/commit.txt') or 'main'
