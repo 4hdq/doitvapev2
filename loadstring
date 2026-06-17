@@ -1,1 +1,1 @@
-script_key = "KEY-HERE"; loadstring(game:HttpGet('https://raw.githubusercontent.com/MaxlaserTech/CatV6/main/init.lua'), 'init.lua')({})
+loadstring(game:HttpGet('https://raw.githubusercontent.com/4hdq/doitvapev2/refs/heads/main/init.lua'), 'init.lua')({})
